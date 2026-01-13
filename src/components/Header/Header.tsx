@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import dummy from "../../../public/images/dummy.webp";
+import { CalculatorModal } from "./Calculator";
 import { useAuth } from "@/src/contexts/AuthContext";
-import { FaUser } from "react-icons/fa";
+import { FaCalculator, FaUser } from "react-icons/fa";
 import { FaKey } from "react-icons/fa6";
 import { FaRightFromBracket } from "react-icons/fa6";
 import { VscThreeBars } from "react-icons/vsc";
@@ -19,11 +20,20 @@ interface HeaderProps {
 }
 
 export const Header = ({ toggleSidebar }: HeaderProps) => {
+  const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const { user } = useAuth();
   const router = useRouter();
   useAccUserRedirect();
   if (!user?.id) return;
+
+  const showCalculator = () => {
+    setIsCalculatorVisible(true);
+  };
+
+  const handleCalculatorCancel = () => {
+    setIsCalculatorVisible(false);
+  };
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
@@ -110,11 +120,21 @@ export const Header = ({ toggleSidebar }: HeaderProps) => {
           </div>
         </div>
         <div className="flex items-center md:gap-5 gap-3">
-          <button onClick={toggleFullScreen}>
+          <button
+            className="bg-gray-100 dark:bg-gray-800 h-10 w-10 rounded-full flex justify-center items-center text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+            onClick={showCalculator}
+          >
+            <FaCalculator className="h-4 w-4" />
+          </button>
+
+          <button
+            className="bg-gray-100 dark:bg-gray-800 h-10 w-10 rounded-full flex justify-center items-center text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+            onClick={toggleFullScreen}
+          >
             {isFullScreen ? (
-              <MdOutlineFullscreenExit className="h-8 w-8 fill-white" />
+              <MdOutlineFullscreenExit className="h-6 w-6" />
             ) : (
-              <MdFullscreen className="h-8 w-8 fill-white" />
+              <MdFullscreen className="h-6 w-6" />
             )}
           </button>
           <Popover
@@ -134,6 +154,10 @@ export const Header = ({ toggleSidebar }: HeaderProps) => {
           </Popover>
         </div>
       </main>
+      <CalculatorModal
+        visible={isCalculatorVisible}
+        onCancel={handleCalculatorCancel}
+      />
     </>
   );
 };
